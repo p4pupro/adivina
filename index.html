@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta id="meta-desc" name="description" content="A picture guessing game for young children." />
+  <title>Guess the word</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="confetti-root" class="confetti-root" aria-hidden="true"></div>
+
+  <main class="app" id="app">
+    <header class="app__header">
+      <div class="app__header-row">
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="Language">
+          <button type="button" class="lang-btn lang-btn--active" id="lang-en" data-lang="en" aria-pressed="true" aria-label="English (UK)" lang="en">
+            <img class="lang-btn__flag" src="assets/flags/uk.svg" alt="" width="40" height="20" decoding="async" />
+          </button>
+          <button type="button" class="lang-btn" id="lang-es" data-lang="es" aria-pressed="false" aria-label="Español" lang="es">
+            <img class="lang-btn__flag" src="assets/flags/es.svg" alt="" width="40" height="27" decoding="async" />
+          </button>
+        </div>
+        <h1 class="app__title" id="ui-h1">What is it?</h1>
+      </div>
+      <div class="score-display" id="score-display" aria-live="polite" aria-atomic="true">
+        <div class="score-display__main">
+          <span class="score-display__value" id="score-value">0</span>
+          <span class="score-display__label" id="score-label">points</span>
+        </div>
+        <div class="score-stars" role="presentation" aria-hidden="true">
+          <span class="score-star"></span>
+          <span class="score-star"></span>
+          <span class="score-star"></span>
+          <span class="score-star"></span>
+          <span class="score-star"></span>
+        </div>
+      </div>
+    </header>
+
+    <section class="splash" id="splash" aria-labelledby="splash-title">
+      <h2 id="splash-title" class="splash__title">Guess the word!</h2>
+      <p class="splash__hint" id="splash-hint">Tap the word that goes with the big picture.</p>
+      <button type="button" class="btn btn--primary btn--huge" id="btn-start">
+        Play!
+      </button>
+    </section>
+
+    <section class="game" id="game" hidden aria-hidden="true">
+      <div class="picture-wrap" id="picture-wrap">
+        <div class="picture-frame" id="picture-frame">
+          <img class="picture" id="picture" src="" alt="" width="400" height="300" decoding="async" />
+          <span class="picture-fallback" id="picture-fallback" hidden aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <p class="sr-only" id="round-instruction">Pick the right word.</p>
+
+      <div class="choices" id="choices" role="group" aria-labelledby="round-instruction">
+        <button type="button" class="choice" id="choice-a" aria-label="Option A"></button>
+        <button type="button" class="choice" id="choice-b" aria-label="Option B"></button>
+      </div>
+    </section>
+
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
