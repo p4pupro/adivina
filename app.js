@@ -59,6 +59,7 @@
   var started = false;
   var busy = false;
   var loadFailed = false;
+  var speechVoicesCached = [];
 
   var el = {
     splash: document.getElementById("splash"),
@@ -185,6 +186,70 @@
       if (s === "es" || s === "en") lang = s;
     } catch (e) {
       /* ignore */
+    }
+  }
+
+  function refreshSpeechVoices() {
+    if (!window.speechSynthesis) return;
+    speechVoicesCached = speechSynthesis.getVoices() || [];
+  }
+
+  function normLang(l) {
+    return (l || "").toLowerCase().replace(/_/g, "-");
+  }
+
+  function pickSpeechVoice() {
+    var voices = speechVoicesCached;
+    if (!voices.length) return null;
+    var i;
+    var v;
+    var l;
+    if (lang === "es") {
+      for (i = 0; i < voices.length; i++) {
+        v = voices[i];
+        l = normLang(v.lang);
+        if (l.indexOf("es-es") === 0) return v;
+      }
+      for (i = 0; i < voices.length; i++) {
+        v = voices[i];
+        if (normLang(v.lang).indexOf("es") === 0) return v;
+      }
+      return null;
+    }
+    for (i = 0; i < voices.length; i++) {
+      v = voices[i];
+      l = normLang(v.lang);
+      if (l.indexOf("en-gb") === 0) return v;
+    }
+    for (i = 0; i < voices.length; i++) {
+      v = voices[i];
+      l = normLang(v.lang);
+      if (l.indexOf("en-us") === 0) return v;
+    }
+    for (i = 0; i < voices.length; i++) {
+      v = voices[i];
+      if (normLang(v.lang).indexOf("en") === 0) return v;
+    }
+    return null;
+  }
+
+  function speakWord(text) {
+    if (!text || !window.speechSynthesis) return;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      var voice = pickSpeechVoice();
+      if (voice) {
+        u.voice = voice;
+        u.lang = voice.lang || (lang === "es" ? "es-ES" : "en-GB");
+      } else {
+        u.lang = lang === "es" ? "es-ES" : "en-GB";
+      }
+      u.rate = 0.92;
+      u.pitch = 1.02;
+      window.speechSynthesis.speak(u);
+    } catch (e) {
+      console.warn(e);
     }
   }
 
@@ -444,6 +509,7 @@
       el.pictureFrame.classList.add("picture-frame--celebrate");
       if (btn.classList) btn.classList.add("choice--correct-flash");
       playSuccess();
+      if (current) speakWord(labelFor(current));
       launchConfetti();
       setTimeout(function () {
         el.game.classList.add("game--fade");
@@ -510,6 +576,15 @@
 
   initLangFromStorage();
   applyLanguage();
+
+  if (window.speechSynthesis) {
+    refreshSpeechVoices();
+    window.speechSynthesis.onvoiceschanged = function () {
+      refreshSpeechVoices();
+    };
+    setTimeout(refreshSpeechVoices, 500);
+    setTimeout(refreshSpeechVoices, 1500);
+  }
 
   loadWords().catch(function (err) {
     loadFailed = true;
