@@ -24,6 +24,8 @@
       loadErrorHint: "Could not load the game. Check your connection and reload.",
       loadErrorStatus: "Error loading data.",
       langGroup: "Language",
+      speakAria: "Listen: {word}",
+      speakButtonDefault: "Listen",
     },
     es: {
       docTitle: "Adivina la palabra",
@@ -44,6 +46,8 @@
       loadErrorHint: "No se pudo cargar el juego. Comprueba la conexión y recarga.",
       loadErrorStatus: "Error al cargar datos.",
       langGroup: "Idioma",
+      speakAria: "Escuchar: {word}",
+      speakButtonDefault: "Escuchar",
     },
   };
 
@@ -70,6 +74,8 @@
     pictureFrame: document.getElementById("picture-frame"),
     choiceA: document.getElementById("choice-a"),
     choiceB: document.getElementById("choice-b"),
+    choiceSpeakA: document.getElementById("choice-speak-a"),
+    choiceSpeakB: document.getElementById("choice-speak-b"),
     status: document.getElementById("status"),
     scoreDisplay: document.getElementById("score-display"),
     scoreValue: document.getElementById("score-value"),
@@ -113,6 +119,34 @@
     return null;
   }
 
+  function syncChoiceSpeakButtons() {
+    if (!el.choiceSpeakA || !el.choiceSpeakB) return;
+    var idA = el.choiceA && el.choiceA.dataset.wordId;
+    var idB = el.choiceB && el.choiceB.dataset.wordId;
+    var wa = idA ? wordById(idA) : null;
+    var wb = idB ? wordById(idB) : null;
+    if (wa) {
+      el.choiceSpeakA.dataset.wordId = idA;
+      el.choiceSpeakA.setAttribute(
+        "aria-label",
+        tr(t("speakAria"), { word: labelFor(wa) })
+      );
+    } else {
+      el.choiceSpeakA.removeAttribute("data-word-id");
+      el.choiceSpeakA.setAttribute("aria-label", t("speakButtonDefault"));
+    }
+    if (wb) {
+      el.choiceSpeakB.dataset.wordId = idB;
+      el.choiceSpeakB.setAttribute(
+        "aria-label",
+        tr(t("speakAria"), { word: labelFor(wb) })
+      );
+    } else {
+      el.choiceSpeakB.removeAttribute("data-word-id");
+      el.choiceSpeakB.setAttribute("aria-label", t("speakButtonDefault"));
+    }
+  }
+
   function applyLanguage() {
     document.documentElement.lang = lang === "es" ? "es" : "en";
     document.title = t("docTitle");
@@ -142,6 +176,7 @@
     if (el.scoreLabel) el.scoreLabel.textContent = t("scoreLabel");
     updateScoreDisplay();
     refreshRoundLabels();
+    syncChoiceSpeakButtons();
     updatePictureFrameAria();
   }
 
@@ -482,6 +517,11 @@
     el.choiceB.disabled = false;
     el.choiceA.setAttribute("aria-label", tr(t("chooseAria"), { word: labelFor(pair[0]) }));
     el.choiceB.setAttribute("aria-label", tr(t("chooseAria"), { word: labelFor(pair[1]) }));
+    if (el.choiceSpeakA) {
+      el.choiceSpeakA.disabled = false;
+      el.choiceSpeakB.disabled = false;
+    }
+    syncChoiceSpeakButtons();
 
     setPicture(current);
     el.status.textContent = "";
@@ -503,6 +543,10 @@
       busy = true;
       el.choiceA.disabled = true;
       el.choiceB.disabled = true;
+      if (el.choiceSpeakA) {
+        el.choiceSpeakA.disabled = true;
+        el.choiceSpeakB.disabled = true;
+      }
       score += 1;
       updateScoreDisplay(true);
       el.status.textContent = t("statusGood");
@@ -562,6 +606,27 @@
   el.choiceB.addEventListener("click", function () {
     handleChoice(el.choiceB);
   });
+
+  function handleChoiceSpeak(btn) {
+    if (busy || !started) return;
+    var id = btn.dataset.wordId;
+    if (!id) return;
+    var w = wordById(id);
+    if (!w) return;
+    resumeAudio();
+    speakWord(labelFor(w));
+  }
+
+  if (el.choiceSpeakA) {
+    el.choiceSpeakA.addEventListener("click", function () {
+      handleChoiceSpeak(el.choiceSpeakA);
+    });
+  }
+  if (el.choiceSpeakB) {
+    el.choiceSpeakB.addEventListener("click", function () {
+      handleChoiceSpeak(el.choiceSpeakB);
+    });
+  }
 
   if (el.langEn) {
     el.langEn.addEventListener("click", function () {

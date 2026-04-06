@@ -60,8 +60,22 @@
       <p class="sr-only" id="round-instruction">Pick the right word.</p>
 
       <div class="choices" id="choices" role="group" aria-labelledby="round-instruction">
-        <button type="button" class="choice" id="choice-a" aria-label="Option A"></button>
-        <button type="button" class="choice" id="choice-b" aria-label="Option B"></button>
+        <div class="choice-column">
+          <button type="button" class="choice" id="choice-a" aria-label="Option A"></button>
+          <button type="button" class="choice-speak" id="choice-speak-a" disabled aria-label="Listen">
+            <svg class="choice-speak__icon" viewBox="0 0 24 24" width="32" height="32" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M3 10v4c0 .55.45 1 1 1h3l4 4V5L7 9H4c-.55 0-1 .45-1 1zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 4.45v15.1c2.35-.85 4-3.13 4-5.55s-1.65-4.7-4-5.55z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="choice-column">
+          <button type="button" class="choice" id="choice-b" aria-label="Option B"></button>
+          <button type="button" class="choice-speak" id="choice-speak-b" disabled aria-label="Listen">
+            <svg class="choice-speak__icon" viewBox="0 0 24 24" width="32" height="32" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M3 10v4c0 .55.45 1 1 1h3l4 4V5L7 9H4c-.55 0-1 .45-1 1zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 4.45v15.1c2.35-.85 4-3.13 4-5.55s-1.65-4.7-4-5.55z"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </section>
 
