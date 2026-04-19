@@ -1,6 +1,28 @@
 (function () {
   "use strict";
 
+  var lastClickAt = 0;
+  document.addEventListener("click", function (e) {
+    var target = e.target.closest('button, [role="button"]');
+    if (!target) return;
+    var now = Date.now();
+    if (now - lastClickAt < 350) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      return;
+    }
+    lastClickAt = now;
+  }, true);
+
+  var lastTouchEnd = 0;
+  document.addEventListener("touchend", function (e) {
+    var now = Date.now();
+    if (now - lastTouchEnd <= 350) {
+      e.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+
   var LANG_KEY = "adivina-lang";
   var lang = "en";
 
